@@ -2,10 +2,13 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { connect as reduxConnect } from 'react-redux'
 import './App.css'
-import {getCollection} from './actions/App'
-import {Grid, Row, Col} from 'react-bootstrap'
+import {getCollectionEntry, getCollectionList, 
+        getCollectionShow, getFavoriteList, 
+        getHomeTimeline, getMentionTimeline, 
+        getStatusUpdate, getStatusUserTimeline} from './actions/App'
+import {Grid, Row, Col, Tabs, Tab} from 'react-bootstrap'
 import Moment from 'react-moment'
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser'
+import ReactHtmlParser from 'react-html-parser'
 
 const Axios = axios.create({
   withCredentials: true,
@@ -14,8 +17,6 @@ const Axios = axios.create({
   "async": true,
   "crossDomain": true,
   headers: {
-    //'Access-Control-Allow-Headers': '*', 
-    //'Access-Control-Allow-Origin': '*',
     'id': 'custom-539487832448843776',
     'Cache-Control': 'no-cache',
     'Content-type': 'application/json',
@@ -28,7 +29,14 @@ const mapStateToProps = ({ApiResponse}) => ({
 })
 
 const mapDispatchToProps = {
-  getCollection
+  getCollectionEntry,
+  getCollectionList, 
+  getCollectionShow,
+  getFavoriteList, 
+  getHomeTimeline,
+  getMentionTimeline, 
+  getStatusUpdate,
+  getStatusUserTimeline
 }
 
 
@@ -49,7 +57,14 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.props.getCollection()
+    this.props.getCollectionEntry()
+    this.props.getCollectionList()
+    this.props.getCollectionShow()
+    this.props.getFavoriteList()
+    this.props.getHomeTimeline()
+    this.props.getMentionTimeline()
+    this.props.getStatusUpdate({status: "TESTING"})
+    this.props.getStatusUserTimeline()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -57,8 +72,8 @@ class App extends Component {
   }
 
   getState = props => {
-    const {Collection} = props.ApiResponse
-    const {objects, response} = Collection ? Collection : {}
+    const {CollectionEntry} = props.ApiResponse
+    const {objects, response} = CollectionEntry ? CollectionEntry : {}
     this.setState({objects, response})
   }
 
@@ -80,14 +95,40 @@ class App extends Component {
 
   render() {
     const {objects, response} = this.state 
-    console.log(objects)
     return (
       <Grid className="App">
         <Row>
-          <h1 style={{textAlign: 'center', color: '#1DA1F2'}}>TWITTER API</h1>
+          <h1 style={{textAlign: 'center', color: 'var(--twitterBlue)'}}>TWITTER API</h1>
         </Row>
         <Row>
-          {objects ? this.renderTweets(objects.tweets) : null}
+        <Tabs defaultActiveKey={1} className="Tabs" animation={true}>
+          <Tab eventKey={1} title="COLLECTION ENTRIES" className="fadeIn-2" unmountOnExit={true}>
+            <Row>
+              {objects ? this.renderTweets(objects.tweets) : null}
+            </Row>
+          </Tab>
+          <Tab eventKey={2} title="COLLECTION LIST" className="fadeIn-2" unmountOnExit={true}>
+            
+          </Tab>
+          <Tab eventKey={3} title="COLLECTION SHOW" className="fadeIn-2" unmountOnExit={true}>
+            
+          </Tab>
+          <Tab eventKey={4} title="FAVORITE LIST" className="fadeIn-2" unmountOnExit={true}>
+            
+          </Tab>
+          <Tab eventKey={5} title="HOME TIMELINE" className="fadeIn-2" unmountOnExit={true}>
+            
+          </Tab>
+          <Tab eventKey={6} title="MENTION TIMELINE" className="fadeIn-2" unmountOnExit={true}>
+            
+          </Tab>
+          <Tab eventKey={7} title="STATUS UPDATE" className="fadeIn-2" unmountOnExit={true}>
+            
+          </Tab>
+          <Tab eventKey={8} title="STATUS USER TIMELINE" className="fadeIn-2" unmountOnExit={true}>
+            
+          </Tab>
+        </Tabs>
         </Row>
       </Grid>
     )
