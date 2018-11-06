@@ -1,20 +1,34 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import Twitter from 'twitter'
+import { connect as reduxConnect } from 'react-redux'
 import './App.css'
+import {getCollection} from './actions/App'
+import {Grid, Row, Col} from 'react-bootstrap'
 
 const Axios = axios.create({
-  baseURL: 'https://ga2pbkjmo5.execute-api.us-west-1.amazonaws.com/hw2/',
+  withCredentials: true,
+  baseURL: 'https://ga2pbkjmo5.execute-api.us-west-1.amazonaws.com/',
   timeout: 10000,
   "async": true,
   "crossDomain": true,
   headers: {
+    //'Access-Control-Allow-Headers': '*', 
+    //'Access-Control-Allow-Origin': '*',
     'id': 'custom-539487832448843776',
     'Cache-Control': 'no-cache',
     'Content-type': 'application/json',
     'Accept': 'application/json'
   },
 })
+
+const mapStateToProps = ({ApiResponse}) => ({
+  ApiResponse,
+})
+
+const mapDispatchToProps = {
+  getCollection
+}
+
 
 class App extends Component {
   constructor(props) {
@@ -30,17 +44,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    Axios.get('collectionentry')
-    .then(res => console.log(res))
-    .catch(err => console.log(err))
-
-    // client.post('statuses/update', {status: 'I Love Twitter'})
-    // .then(function (tweet) {
-    //   console.log(tweet);
-    // })
-    // .catch(function (error) {
-    //   throw error;
-    // })
+    this.props.getCollection()
   }
 
 
@@ -49,18 +53,37 @@ class App extends Component {
   }
 
   getState = props => {
+    const {ApiResponse} = props
+    this.setState({ApiResponse})
   }
 
   componentWillUnmount() {
   }
 
+  renderTweets = tweets => Object.keys(tweets).map(key => (
+    console.log(tweets[key]),
+    <Col className="textContainer">
+      {tweets[key].text}
+    </Col>
+  ))
+
   render() {
+    const {Collection} = this.state.ApiResponse
+    const {objects, response} = Collection
+    console.log(objects.tweets)
+    //const {tweets, users, timelines} = objects
+    //const {timeline, timeline_id, position} = response
     return (
-      <div className="App">
-      TWITTER API
-      </div>
+      <Grid className="App">
+        <Row>
+          <Col>
+            TWITTER API
+          </Col>
+          {this.renderTweets(objects.tweets)}
+        </Row>
+      </Grid>
     )
   }
 }
 
-export default App;
+export default reduxConnect(mapStateToProps, mapDispatchToProps)(App)
