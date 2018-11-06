@@ -4,6 +4,8 @@ import { connect as reduxConnect } from 'react-redux'
 import './App.css'
 import {getCollection} from './actions/App'
 import {Grid, Row, Col} from 'react-bootstrap'
+import Moment from 'react-moment'
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser'
 
 const Axios = axios.create({
   withCredentials: true,
@@ -64,11 +66,17 @@ class App extends Component {
   }
 
   renderTweets = tweets => Object.keys(tweets).map(key => (
-    console.log(tweets[key]),
-    <Col className="textContainer">
-      {tweets[key].text}
+    <Col md={6}>
+      <div className="textContainer">
+        <div>Created: <Moment format="MMM DD, YYYY">{tweets[key].created_at}</Moment></div>
+        <div>{ReactHtmlParser(this.urlify(tweets[key].text))}</div>
+      </div>
     </Col>
+      
   ))
+
+  urlify = text => text.replace(/(https?:\/\/[^\s]+)/g, '<a target="_blank" href="$1">$1</a>')
+
 
   render() {
     const {objects, response} = this.state 
@@ -76,9 +84,9 @@ class App extends Component {
     return (
       <Grid className="App">
         <Row>
-          <Col>
-            TWITTER API
-          </Col>
+          <h1 style={{textAlign: 'center', color: '#1DA1F2'}}>TWITTER API</h1>
+        </Row>
+        <Row>
           {objects ? this.renderTweets(objects.tweets) : null}
         </Row>
       </Grid>
