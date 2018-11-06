@@ -69,7 +69,7 @@ class App extends Component {
 
   render() {
     const {Collection} = this.state.ApiResponse
-    const {objects, response} = Collection
+    const {objects, response} = Collection.objects ? Collection : {tweets: {}}
     console.log(objects.tweets)
     //const {tweets, users, timelines} = objects
     //const {timeline, timeline_id, position} = response
