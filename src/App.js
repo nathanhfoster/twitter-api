@@ -38,6 +38,9 @@ class App extends Component {
     }
   }
 
+  static defaultProps = {
+  }
+
   
   componentWillMount() {
     this.getState(this.props)
@@ -47,14 +50,14 @@ class App extends Component {
     this.props.getCollection()
   }
 
-
   componentWillReceiveProps(nextProps) {
     this.getState(nextProps)
   }
 
   getState = props => {
-    const {ApiResponse} = props
-    this.setState({ApiResponse})
+    const {Collection} = props.ApiResponse
+    const {objects, response} = Collection ? Collection : {}
+    this.setState({objects, response})
   }
 
   componentWillUnmount() {
@@ -68,18 +71,15 @@ class App extends Component {
   ))
 
   render() {
-    const {Collection} = this.state.ApiResponse
-    const {objects, response} = Collection.objects ? Collection : objects: {tweets: {}}
-    console.log(objects.tweets)
-    //const {tweets, users, timelines} = objects
-    //const {timeline, timeline_id, position} = response
+    const {objects, response} = this.state 
+    console.log(objects)
     return (
       <Grid className="App">
         <Row>
           <Col>
             TWITTER API
           </Col>
-          {this.renderTweets(objects.tweets)}
+          {objects ? this.renderTweets(objects.tweets) : null}
         </Row>
       </Grid>
     )
