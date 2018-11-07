@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { connect as reduxConnect } from 'react-redux'
 import './App.css'
-import {getCollectionEntry, getCollectionList, 
-        getCollectionShow, getFavoriteList, 
-        getHomeTimeline, getMentionTimeline, 
+import {getCollectionEntry, getCollectionList,
+        getCollectionShow, getFavoriteList,
+        getHomeTimeline, getMentionTimeline,
         getStatusUpdate, getStatusUserTimeline} from './actions/App'
 import {Grid, Row, Col, Tabs, Tab} from 'react-bootstrap'
 import Moment from 'react-moment'
@@ -30,11 +30,11 @@ const mapStateToProps = ({ApiResponse}) => ({
 
 const mapDispatchToProps = {
   getCollectionEntry,
-  getCollectionList, 
+  getCollectionList,
   getCollectionShow,
-  getFavoriteList, 
+  getFavoriteList,
   getHomeTimeline,
-  getMentionTimeline, 
+  getMentionTimeline,
   getStatusUpdate,
   getStatusUserTimeline
 }
@@ -44,14 +44,14 @@ class App extends Component {
   constructor(props) {
     super(props)
 
-    this.state = { 
+    this.state = {
     }
   }
 
   static defaultProps = {
   }
 
-  
+
   componentWillMount() {
     this.getState(this.props)
   }
@@ -63,7 +63,7 @@ class App extends Component {
     this.props.getFavoriteList()
     this.props.getHomeTimeline()
     this.props.getMentionTimeline()
-    this.props.getStatusUpdate({status: "TESTING"})
+    this.props.getStatusUpdate({status: "TESTING "})
     this.props.getStatusUserTimeline()
   }
 
@@ -87,14 +87,24 @@ class App extends Component {
         <div>{ReactHtmlParser(this.urlify(tweets[key].text))}</div>
       </div>
     </Col>
-      
+
   ))
+
+    renderHomeTimeline = tweets => Object.keys(tweets).map(key => (
+        <Col md={6}>
+            <div className="textContainer">
+                <div>Created: <Moment format="MMM DD, YYYY">{tweets[key].created_at}</Moment></div>
+                <div>{ReactHtmlParser(this.urlify(tweets[key].text))}</div>
+            </div>
+        </Col>
+
+    ))
 
   urlify = text => text.replace(/(https?:\/\/[^\s]+)/g, '<a target="_blank" href="$1">$1</a>')
 
 
   render() {
-    const {objects, response} = this.state 
+    const {objects, response} = this.state
     return (
       <Grid className="App">
         <Row>
@@ -108,25 +118,28 @@ class App extends Component {
             </Row>
           </Tab>
           <Tab eventKey={2} title="COLLECTION LIST" className="fadeIn-2" unmountOnExit={true}>
-            
+            <div></div>
           </Tab>
           <Tab eventKey={3} title="COLLECTION SHOW" className="fadeIn-2" unmountOnExit={true}>
-            
+              <Col md={6}>
+                  <div className="textContainer">
+                      {JSON.stringify(this.props.ApiResponse.CollectionShow)}
+                  </div>
+              </Col>
           </Tab>
           <Tab eventKey={4} title="FAVORITE LIST" className="fadeIn-2" unmountOnExit={true}>
-            
+              {this.renderTweets(this.props.ApiResponse.FavoriteList)}
           </Tab>
           <Tab eventKey={5} title="HOME TIMELINE" className="fadeIn-2" unmountOnExit={true}>
-            
+              {this.renderTweets(this.props.ApiResponse.HomeTimeline)}
           </Tab>
           <Tab eventKey={6} title="MENTION TIMELINE" className="fadeIn-2" unmountOnExit={true}>
-            
+              {this.renderHomeTimeline(this.props.ApiResponse.MentionTimeline)}
           </Tab>
           <Tab eventKey={7} title="STATUS UPDATE" className="fadeIn-2" unmountOnExit={true}>
-            
           </Tab>
           <Tab eventKey={8} title="STATUS USER TIMELINE" className="fadeIn-2" unmountOnExit={true}>
-            
+              {this.renderTweets(this.props.ApiResponse.StatusUserTimeline)}
           </Tab>
         </Tabs>
         </Row>

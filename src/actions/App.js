@@ -12,7 +12,8 @@ const Axios = axios.create({
       'id': 'custom-539487832448843776',
       'Cache-Control': 'no-cache',
       'Content-type': 'application/json',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+        'screen_name': 'johnydoestres'
     },
   })
 
