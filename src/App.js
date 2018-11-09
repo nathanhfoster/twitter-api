@@ -118,7 +118,7 @@ class App extends Component {
             </Row>
           </Tab>
           <Tab eventKey={2} title="COLLECTION LIST" className="fadeIn-2" unmountOnExit={true}>
-            <div></div>
+            <div>{JSON.stringify(this.props.ApiResponse.CollectionList)}</div>
           </Tab>
           <Tab eventKey={3} title="COLLECTION SHOW" className="fadeIn-2" unmountOnExit={true}>
               <Col md={6}>
@@ -137,6 +137,12 @@ class App extends Component {
               {this.renderHomeTimeline(this.props.ApiResponse.MentionTimeline)}
           </Tab>
           <Tab eventKey={7} title="STATUS UPDATE" className="fadeIn-2" unmountOnExit={true}>
+            <div>
+              <form >
+                <input type='text' style={{color: "#000"}} name='status' />
+                <button style={{color:'#000'}} type='submit'>Submit</button>
+              </form>
+            </div>
           </Tab>
           <Tab eventKey={8} title="STATUS USER TIMELINE" className="fadeIn-2" unmountOnExit={true}>
               {this.renderTweets(this.props.ApiResponse.StatusUserTimeline)}
