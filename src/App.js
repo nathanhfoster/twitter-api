@@ -45,6 +45,7 @@ class App extends Component {
     super(props)
 
     this.state = {
+      newStatus: false,
     }
   }
 
@@ -63,7 +64,7 @@ class App extends Component {
     this.props.getFavoriteList()
     this.props.getHomeTimeline()
     this.props.getMentionTimeline()
-    this.props.getStatusUpdate({status: "TESTING "})
+    // this.props.getStatusUpdate({status: "TESTING "})
     this.props.getStatusUserTimeline()
   }
 
@@ -72,9 +73,14 @@ class App extends Component {
   }
 
   getState = props => {
-    const {CollectionEntry} = props.ApiResponse
+    const {CollectionEntry, StatusUserTimeline, StatusUpdate, CollectionList,MentionTimeline, HomeTimeline,
+        FavoriteList,
+    } = props.ApiResponse
     const {objects, response} = CollectionEntry ? CollectionEntry : {}
-    this.setState({objects, response})
+    this.setState({objects, response, StatusUserTimeline, StatusUpdate,CollectionList,MentionTimeline,
+        HomeTimeline,
+        FavoriteList,
+    })
   }
 
   componentWillUnmount() {
@@ -104,7 +110,8 @@ class App extends Component {
 
 
   render() {
-    const {objects, response} = this.state
+    const {objects, response, StatusUserTimeline, StatusUpdate, CollectionList, MentionTimeline,
+        HomeTimeline, FavoriteList} = this.state
     return (
       <Grid className="App">
         <Row>
@@ -118,34 +125,40 @@ class App extends Component {
             </Row>
           </Tab>
           <Tab eventKey={2} title="COLLECTION LIST" className="fadeIn-2" unmountOnExit={true}>
-            <div>{JSON.stringify(this.props.ApiResponse.CollectionList)}</div>
+            <div>{JSON.stringify(CollectionList)}</div>
           </Tab>
           <Tab eventKey={3} title="COLLECTION SHOW" className="fadeIn-2" unmountOnExit={true}>
               <Col md={6}>
                   <div className="textContainer">
-                      {JSON.stringify(this.props.ApiResponse.CollectionShow)}
+                      {JSON.stringify(this.props.ApiResponse.CollectionList)}
                   </div>
               </Col>
           </Tab>
           <Tab eventKey={4} title="FAVORITE LIST" className="fadeIn-2" unmountOnExit={true}>
-              {this.renderTweets(this.props.ApiResponse.FavoriteList)}
+              {FavoriteList ? this.renderTweets(this.props.ApiResponse.FavoriteList): null}
           </Tab>
           <Tab eventKey={5} title="HOME TIMELINE" className="fadeIn-2" unmountOnExit={true}>
-              {this.renderTweets(this.props.ApiResponse.HomeTimeline)}
+              {HomeTimeline ? this.renderTweets(this.props.ApiResponse.HomeTimeline): null}
           </Tab>
           <Tab eventKey={6} title="MENTION TIMELINE" className="fadeIn-2" unmountOnExit={true}>
-              {this.renderHomeTimeline(this.props.ApiResponse.MentionTimeline)}
+              {MentionTimeline ? this.renderHomeTimeline(this.props.ApiResponse.MentionTimeline) : null}
           </Tab>
           <Tab eventKey={7} title="STATUS UPDATE" className="fadeIn-2" unmountOnExit={true}>
-            <div>
-              <form >
-                <input type='text' style={{color: "#000"}} name='status' />
-                <button style={{color:'#000'}} type='submit'>Submit</button>
-              </form>
-            </div>
+              {StatusUpdate ? this.renderTweets([this.props.ApiResponse.StatusUpdate]) :<div>
+                  <form onSubmit={(e) => {
+                      e.preventDefault()
+                      console.log('submit', e.target.status.value);
+                      const status = e.target.status.value;
+                      this.props.getStatusUpdate({status: status})
+                  }
+                  }>
+                      <input type='text' style={{color: "#000"}} name='status'/>
+                      <button style={{color: '#000'}} type='submit'>Submit</button>
+                  </form>
+              </div>}
           </Tab>
           <Tab eventKey={8} title="STATUS USER TIMELINE" className="fadeIn-2" unmountOnExit={true}>
-              {this.renderTweets(this.props.ApiResponse.StatusUserTimeline)}
+              {StatusUserTimeline ? this.renderTweets(StatusUserTimeline) : null}
           </Tab>
         </Tabs>
         </Row>
